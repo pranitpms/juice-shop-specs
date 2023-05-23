@@ -4,22 +4,20 @@ import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-prepro
 import createEsbuildPlugin from "@badeball/cypress-cucumber-preprocessor/esbuild";
 
 export default defineConfig({
-  chromeWebSecurity :false,
   e2e: {
     specPattern: "**/*.feature",
+   // baseUrl  : 'https://juice-shop.herokuapp.com/#/',
     async setupNodeEvents(
       on: Cypress.PluginEvents,
       config: Cypress.PluginConfigOptions
     ): Promise<Cypress.PluginConfigOptions> {
       await addCucumberPreprocessorPlugin(on, config);
-
       on(
         "file:preprocessor",
         createBundler({
           plugins: [createEsbuildPlugin(config)],
         })
       );
-
       return config;
     },
   },
