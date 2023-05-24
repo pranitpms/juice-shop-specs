@@ -4,7 +4,11 @@
   "description": "Cypress Automation Test cases with BDD",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-regression-chrome-headed": "cypress run -e TAGS=\"@regression\" --headed --browser chrome",
+    "test-regression-chrome-headless": "cypress run -e TAGS=\"@regression\" --browser chrome",
+    "test-regression-edge-headed": "cypress run -e TAGS=\"@regression\" --headed --browser edge",
+    "test-regression-edge-headless": "cypress run -e TAGS=\"@regression\" --browser edge"
   },
   "repository": {
     "type": "git",
@@ -25,6 +29,14 @@
     "ts-loader": "^9.4.2"
   },
   "cypress-cucumber-preprocessor": {
-    "stepDefinitions": "cypress/step_definitions/**/*.ts"
+    "stepDefinitions": "cypress/step_definitions/**/*.ts",
+    "html": {
+      "enabled": true,
+      "output": "cypress/reports/html/juice-shop-spec.html"
+    },
+    "messages": {
+      "enabled": true,
+      "output": "cypress/reports/ndjson/juice-shop-spec.ndjson"
+    }
   }
 }

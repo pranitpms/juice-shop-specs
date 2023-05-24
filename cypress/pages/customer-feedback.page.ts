@@ -1,3 +1,4 @@
+import { FeedbackLocator } from "../support/locators/customer-feedback.locator";
 import { CommonPage } from "./common.page";
 
 export class CustomerFeedbackPage {
@@ -6,106 +7,97 @@ export class CustomerFeedbackPage {
         cy.fixture('feedback.comment.json')
             .then((feedback: any) => {
                 let comment = CustomerFeedbackPage.getComment(feedback.comment, charcterLength);
-                cy.get('textarea#comment').type(`${comment}{tab}`);
+                cy.get(FeedbackLocator.COMMENTTEXT).type(`${comment}`);
             });
     }
 
-    public static addRating = (star: number): void => {
-        star = star > 5 ? 5 : star;
-        const arrows = '{rightarrow}'.repeat(star);
+    public static addEmptyComment = (): void => {
+        cy.get(FeedbackLocator.COMMENTTEXT).as('textarea').focus();
+        cy.get('@textarea').blur();
+    }
 
-        cy.get('mat-slider#rating')
+    public static addRating = (star: number): void => {
+        const arrows: string = '{rightarrow}'.repeat(star - 1);
+        cy.get(FeedbackLocator.RATING)
             .should('have.attr', 'aria-valuenow', 0)
+            .focus()
             .type(arrows);
 
-        cy.get('mat-slider#rating')
+        cy.get(FeedbackLocator.RATING)
             .should('have.attr', 'aria-valuenow', star);
     }
 
     public static addWrongCaptcha = (): void => {
-        cy.get('#captcha')
+        cy.get(FeedbackLocator.CAPTCHATEXT)
             .wait(2000)
             .then((captcha: JQuery<HTMLElement>) => {
                 if (captcha) {
                     let result = Number(eval(captcha.text())) * -1;
-                    cy.get('#captchaControl').type(`${result}{tab}`);
+                    cy.get(FeedbackLocator.CAPTCHACONTROL).type(`${result}`);
                 }
             });
     }
 
     public static addNoCaptcha = (): void => {
-        cy.get('#captcha')
-            .wait(2000)
-            .then((captcha: JQuery<HTMLElement>) => {
-                if (captcha) {
-                    cy.get('#captchaControl').type(`{tab}`);
-                }
-            });
+        cy.get(FeedbackLocator.CAPTCHACONTROL).as('nocaptcha').focus();
+        cy.get('@nocaptcha').blur();
     }
 
     public static addCaptcha = (text: string = null): void => {
-        cy.get('#captcha')
+        cy.get(FeedbackLocator.CAPTCHATEXT)
             .wait(2000)
             .then((captcha: JQuery<HTMLElement>) => {
                 if (captcha) {
                     let result = text ? text : eval(captcha.text());
-                    cy.get('#captchaControl').type(`${result}{tab}`);
+                    cy.get(FeedbackLocator.CAPTCHACONTROL).type(`${result}`);
                 }
             });
     }
 
     public static submitFeedBack = (): void => {
         cy.intercept('POST', 'https://juice-shop.herokuapp.com/api/Feedbacks/').as('postFeedback');
-
-        cy.get('#submitButton')
+        cy.get(FeedbackLocator.SUBMITBUTTON)
             .should('be.enabled')
             .click();
     }
 
     public static verifyCommentValidation = (): void => {
-        cy.get('button[aria-label="Language selection menu"] span[class="mat-button-wrapper"] span')
+        cy.get('@langbtn')
             .then(($span) => {
                 let lang = $span.text().trim().toLocaleLowerCase();
-                cy.get('mat-error#mat-error-3')
-                    .should('be.visible')
-                    .then((error) => {
-                        expect(error.text()).to.equal(CommonPage.translate('MANDATORY_COMMENT', lang));
-                    })
+                let error = CommonPage.translate('MANDATORY_COMMENT', lang);
+                cy.contains(error);
             });
     }
 
     public static verifyCaptchValidation = (): void => {
-        cy.get('button[aria-label="Language selection menu"] span[class="mat-button-wrapper"]span')
+        cy.get('@langbtn')
             .then(($span) => {
-                debugger;
                 let lang = $span.text().trim().toLocaleLowerCase();
-                cy.get('mat-error#mat-error-4')
-                    .should('be.visible')
-                    .then((error) => {
-                        expect(error.text()).to.equal(CommonPage.translate('INVALID_CAPTCHA', lang));
-                    })
+                let error = CommonPage.translate('INVALID_CAPTCHA', lang);
+                cy.contains(error);
             });
     }
 
     public static verifyMandatoryCaptchValidation = (): void => {
-        cy.get('button[aria-label="Language selection menu"] span[class="mat-button-wrapper"]span')
+        cy.get('@langbtn')
             .then(($span) => {
-                debugger;
                 let lang = $span.text().trim().toLocaleLowerCase();
-                cy.get('mat-error#mat-error-4')
-                    .should('be.visible')
-                    .then((error) => {
-                        expect(error.text()).to.equal(CommonPage.translate('MANDATORY_CAPTCHA', lang));
-                    })
+                let error = CommonPage.translate('MANDATORY_CAPTCHA', lang);
+                cy.contains(error);
             });
     }
 
     public static verifyFormControls = (): void => {
-        cy.get('#mat-input-1').should('be.disabled');
-        cy.get('#comment').should('be.enabled');
-        cy.get('#rating').should('be.enabled');
-        cy.get('#captchaControl').should('be.enabled');
-        cy.get('#submitButton').should('be.disabled');
+        cy.get(FeedbackLocator.AUTHOR).should('be.disabled');
+        cy.get(FeedbackLocator.COMMENTTEXT).should('be.enabled');
+        cy.get(FeedbackLocator.RATING).should('be.visible');
+        cy.get(FeedbackLocator.CAPTCHACONTROL).should('be.enabled');
+        CustomerFeedbackPage.verifySubmitButtonIsDisabled();
+    }
+
+    public static verifySubmitButtonIsDisabled = ():void =>{
+        cy.get(FeedbackLocator.SUBMITBUTTON).should('be.disabled');
     }
 
     public static verifyCustomerFeedbackIsValid = (): void => {

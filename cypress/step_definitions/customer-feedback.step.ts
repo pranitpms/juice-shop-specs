@@ -1,10 +1,16 @@
-import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
+import { Before, Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 import { CustomerFeedbackPage } from "../pages/customer-feedback.page";
 
-
+Before(() => {
+    cy.log('er')
+})
 
 Given(`User added a comment of {int} character length`, (length: number) => {
     CustomerFeedbackPage.addComment(length);
+});
+
+When('User added a no comment', () => {
+    CustomerFeedbackPage.addEmptyComment();
 });
 
 Given(`User gave {int} stars rating`, (rating: number) => {
@@ -53,4 +59,8 @@ Then('verify the customer feedback is submitted successfully', () => {
 
 Then('verify the result for Invalid captcha', () => {
     CustomerFeedbackPage.verifyResultForInvalidCaptch();
+});
+
+Then('verify submit button is not enabled', () => {
+    CustomerFeedbackPage.verifySubmitButtonIsDisabled();
 });

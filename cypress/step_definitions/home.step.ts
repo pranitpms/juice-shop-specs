@@ -12,7 +12,5 @@ Then('Verify user is landed on Home Page', () => {
 
 
 Given('User change the language to {word}', (language: string) => {
-    debugger;
     CommonPage.selectLanguage(language);
-    
 });
