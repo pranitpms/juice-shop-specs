@@ -5,11 +5,11 @@ Before(() => {
     cy.log('er')
 })
 
-Given(`User added a comment of {int} character length`, (length: number) => {
+Given(`User adds a comment of {int} character length`, (length: number) => {
     CustomerFeedbackPage.addComment(length);
 });
 
-When('User added a no comment', () => {
+When('User keeps comment box empty', () => {
     CustomerFeedbackPage.addEmptyComment();
 });
 
@@ -21,7 +21,7 @@ Given('User type captcha result', () => {
     CustomerFeedbackPage.addCaptcha();
 });
 
-Given('User submit the feedback', () => {
+Given('User submits the feedback', () => {
     CustomerFeedbackPage.submitFeedBack();
 })
 
@@ -33,11 +33,11 @@ Then(`Comment field should show validation message`, () => {
     CustomerFeedbackPage.verifyCommentValidation();
 });
 
-When('User give captcha value as {string}', (value: string) => {
+When('User does not add captcha value as {string}', (value: string) => {
     CustomerFeedbackPage.addCaptcha(value);
 });
 
-When('User give wrong captcha value', () => {
+When('User entered wrong captcha value', () => {
     CustomerFeedbackPage.addWrongCaptcha();
 });
 
@@ -53,14 +53,14 @@ Then(`Captcha field should show mandatory validation message`, () => {
     CustomerFeedbackPage.verifyMandatoryCaptchValidation();
 });
 
-Then('verify the customer feedback is submitted successfully', () => {
+Then('Verify the customer feedback is submitted successfully', () => {
     CustomerFeedbackPage.verifyCustomerFeedbackIsValid();
 });
 
-Then('verify the result for Invalid captcha', () => {
+Then('Verify the result for Invalid captcha', () => {
     CustomerFeedbackPage.verifyResultForInvalidCaptch();
 });
 
-Then('verify submit button is not enabled', () => {
+Then('Verify submit button is not enabled', () => {
     CustomerFeedbackPage.verifySubmitButtonIsDisabled();
 });
